@@ -21,7 +21,7 @@ import java.util.logging.Logger;
  * C:\Users\asus-pc\Documents\NetBeansProjects\PFM\web\index.html
  */
 public class GenerateForm {
-
+    public static String absoluteLink = "C:\\Users\\asus-pc\\Documents\\NetBeansProjects\\PFM";
     public void generateForm(String table) {
         try {
             Cox c = new Cox();
@@ -37,11 +37,14 @@ public class GenerateForm {
                     colsType.add("Double");
                 } else if (rs.getString(2).contains("int")) {
                     colsType.add("Integer");
+                } else {
+                    colsType.add("String");
                 }
             }
-
+            System.out.println("colsNamesSize:" + colsName.size());
+            System.out.println("colsTypeSize:" + colsType.size());
             //Création de la classe
-            File bean = new File("C:\\Users\\asus-pc\\Documents\\NetBeansProjects\\PFM\\src\\java\\bean\\" + convert(table) + ".java");
+            File bean = new File(absoluteLink+"\\src\\java\\bean\\" + convert(table) + ".java");
             if (!bean.exists()) {
                 bean.createNewFile();
             }
@@ -49,7 +52,7 @@ public class GenerateForm {
             fw.write(generateClassContent(table, colsName, colsType));
             fw.close();
             //Création de formulaire
-            File form = new File("C:\\Users\\asus-pc\\Documents\\NetBeansProjects\\PFM\\web\\create_" + table + ".jsp");
+            File form = new File(absoluteLink+"\\web\\create_" + table + ".jsp");
             if (!form.exists()) {
                 form.createNewFile();
             }
@@ -57,7 +60,7 @@ public class GenerateForm {
             fw.write(generateFormHtmlContent(table, colsName, colsType));
             fw.close();
             //Création de la servlete de formulaire
-            File servlete = new File("C:\\Users\\asus-pc\\Documents\\NetBeansProjects\\PFM\\src\\java\\servlet\\" + convert(table) + "CreateServlet.java");
+            File servlete = new File(absoluteLink+"\\src\\java\\servlet\\" + convert(table) + "CreateServlet.java");
             if (!servlete.exists()) {
                 servlete.createNewFile();
             }
@@ -65,7 +68,7 @@ public class GenerateForm {
             fw.write(generateServletCreateContent(table, colsName, colsType));
             fw.close();
             //Création de la view d'affichage
-            File view = new File("C:\\Users\\asus-pc\\Documents\\NetBeansProjects\\PFM\\web\\view_" + table + ".jsp");
+            File view = new File(absoluteLink+"\\web\\view_" + table + ".jsp");
             if (!view.exists()) {
                 view.createNewFile();
             }
@@ -73,7 +76,7 @@ public class GenerateForm {
             fw.write(generateListHtmlContent(table, colsName, colsType));
             fw.close();
             //Creation de la servlete d'affichage
-            File listeS = new File("C:\\Users\\asus-pc\\Documents\\NetBeansProjects\\PFM\\src\\java\\servlet\\" + convert(table) + "ViewServlet.java");
+            File listeS = new File(absoluteLink+"\\src\\java\\servlet\\" + convert(table) + "ViewServlet.java");
             if (!listeS.exists()) {
                 listeS.createNewFile();
             }
@@ -81,7 +84,7 @@ public class GenerateForm {
             fw.write(generateServletViewContent(table, colsName, colsType));
             fw.close();
             //Creation de la view update
-            File updateView = new File("C:\\Users\\asus-pc\\Documents\\NetBeansProjects\\PFM\\web\\update_" + table + ".jsp");
+            File updateView = new File(absoluteLink+"\\web\\update_" + table + ".jsp");
             if (!updateView.exists()) {
                 updateView.createNewFile();
             }
@@ -113,7 +116,7 @@ public class GenerateForm {
         }
         content = content + "){\n";
         for (int i = 0; i < cols.size(); i++) {
-            content = content + cols.get(i) + "=" + "(" + types.get(i) + ") " + cols.get(i) + "" + i + ";\n";
+            content = content + cols.get(i) + "=" + types.get(i) + ".valueOf(" + cols.get(i) + "" + i + ".toString());\n";
         }
         content = content + "}\n";
         //Getters
@@ -355,7 +358,7 @@ public class GenerateForm {
     }
 
     public void generateIndexPage(List<String> tables) throws IOException {
-        File index = new File("C:\\Users\\asus-pc\\Documents\\NetBeansProjects\\PFM\\web\\index.html");
+        File index = new File(absoluteLink+"\\web\\index.html");
         if (!index.exists()) {
             index.createNewFile();
         }
@@ -375,10 +378,16 @@ public class GenerateForm {
                 + "    </head>\n"
                 + "    <body class='container'>\n";
         content = content + "<div class='card'>\n<div class='card-header bg-info'>\nPage Accueil\n</div>\n";
-        content = content + "<div class='card-body'>\n";
+        content = content + "<div class='card-body'>\n<div class='row'>\n";
         for (String name : tables) {
-            content = content + "<a href='create_" + name + "'>Ajouter " + convert(name) + "</a><br>\n";
-            content = content + "<a href='view_" + name + "'>Liste " + convert(name) + "</a><br>\n";
+            content = content + "<div class='col-md-4 col-xs-12 mb-2'>\n<div class=\"card\">\n"
+                    + "  <div class=\"card-header\">\n"
+                    + name
+                    + "  </div>\n"
+                    + "  <ul class=\"list-group list-group-flush\">\n";
+            content = content + "<li class=\"list-group-item\">\n<a href='create_" + name + "'>Ajouter " + convert(name) + "</a></li>\n";
+            content = content + "<li class=\"list-group-item\">\n<a href='view_" + name + "'>Liste " + convert(name) + "</a></li>\n"
+                    + "</ul>\n</div>\n</div>\n";
         }
         content = content + "</div>\n";
         content = content + "</div>";

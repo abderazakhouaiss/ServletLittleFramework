@@ -26,7 +26,7 @@ public class Cox {
     public Connection etablirConnection() throws ClassNotFoundException, SQLException {
         if (con == null) {
             Class.forName("com.mysql.jdbc.Driver");
-            con = DriverManager.getConnection("jdbc:mysql://localhost:3306/bdtest", "root", "");
+            con = DriverManager.getConnection("jdbc:mysql://localhost:3306/bdoo", "root", "");
         }
         return con;
     }
@@ -52,7 +52,6 @@ public class Cox {
             list.add(klazz.getConstructor(types).newInstance(data.toArray()));
             data.clear();
         }
-        System.out.println("Test");
         list.add(klazz.cast(actuallyT));
         return list;
     }
